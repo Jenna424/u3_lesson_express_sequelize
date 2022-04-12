@@ -36,6 +36,8 @@ const GetRecentTwerts = async (req, res) => {
 
 const GetTwertDetails = async (req, res) => {
   try {
+    const twert = await Twerts.findByPk(req.params.twert_id)
+    res.send(twert)
   } catch (error) {
     throw error
   }
@@ -43,6 +45,13 @@ const GetTwertDetails = async (req, res) => {
 
 const CreateTwert = async (req, res) => {
   try {
+    let ownerId = parseInt(req.params.user_id)
+    let twertBody = {
+      ownerId,
+      ...req.body
+    }
+    let twert = await Twerts.create(twertBody)
+    res.send(twert)
   } catch (error) {
     throw error
   }
@@ -50,6 +59,12 @@ const CreateTwert = async (req, res) => {
 
 const UpdateTwert = async (req, res) => {
   try {
+    let twertId = parseInt(req.params.twert_id)
+    let updatedTwert = await Twerts.update(req.body, {
+      where: { id: twertId },
+      returning: true
+    })
+    res.send(updatedTwert)
   } catch (error) {
     throw error
   }
@@ -57,6 +72,9 @@ const UpdateTwert = async (req, res) => {
 
 const DeleteTwert = async (req, res) => {
   try {
+    let twertId = parseInt(req.params.twert_id)
+    await Twerts.destroy({ where: { id: twertId } })
+    res.send({ message: `Deleted twert with an id of ${twertId}` })
   } catch (error) {
     throw error
   }
